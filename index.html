@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformers Playground</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <script type="importmap">
+      {
+        "imports": {
+          "preact": "https://esm.sh/preact",
+          "preact/hooks": "https://esm.sh/preact/hooks",
+          "htm/preact": "https://esm.sh/htm/preact"
+        }
+      }
+    </script>
+    <script type="module">
+        import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0/+esm';
+        window.pipeline = pipeline;
+    </script>
+</head>
+<body>
+    <main class="container">
+        <h1>Transformers Playground</h1>
+        <div id="app"></div>
+    </main>
+    <script type="module" src="src/app.js"></script>
+</body>
+</html>

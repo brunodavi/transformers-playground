@@ -1,0 +1,14 @@
+{
+  "name": "transformers-playground",
+  "version": "1.0.0",
+  "description": "Playground for Transformers.js with Preact and PicoCSS",
+  "type": "module",
+  "main": "start-server.js",
+  "scripts": {
+    "start": "node start-server.js",
+    "test": "node --test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
