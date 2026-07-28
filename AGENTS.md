@@ -25,6 +25,7 @@ Este é um playground de IA rodando diretamente no navegador, utilizando **Trans
 - **Imports:** Utilizamos `esm.sh` para dependências externas no navegador e caminhos relativos para arquivos locais.
 - **Ambiente de Testes:** Rodado via `node --test`. Como o código fonte importa módulos de `https://`, os testes unitários devem focar em lógica pura ou usar mocks, evitando importar arquivos que contenham URLs `https://`.
 - **Configuração:** `package.json` define `"type": "module"`.
+- **Commits:** Usar [Conventional Commits](https://www.conventionalcommits.org/) (ex: `feat:`, `fix:`, `test:`, `refactor:`).
 
 ## Documentação de Referência
 - O diretório `docs/transformers` contém documentação offline do Transformers.js para consulta quando necessário.
