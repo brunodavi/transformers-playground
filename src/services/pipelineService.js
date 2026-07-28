@@ -10,7 +10,13 @@ export class PipelineService {
             options.progress_callback = progressCallback;
         }
 
-        return await win.pipeline(task, modelName, options);
+        const pipe = await win.pipeline(task, modelName, options);
+
+        if (typeof pipe !== 'function') {
+            throw new Error('Pipeline carregado não é uma função.');
+        }
+
+        return pipe;
     }
 
     static async checkModelExists(modelName) {
