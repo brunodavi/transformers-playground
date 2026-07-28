@@ -6,7 +6,7 @@ const html = htm.bind(h);
 export function InferenceForm({ inputData, setInputData, loading, pipelineInstance, handleRunInference }) {
     return html`
         <article>
-            <header><strong>2. Executar Inferência</strong></header>
+            <header><strong>Executar Inferência</strong></header>
             <form onSubmit=${handleRunInference}>
                 <label>
                     Dados de Entrada (Input):

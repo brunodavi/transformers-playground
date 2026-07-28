@@ -6,7 +6,7 @@ const html = htm.bind(h);
 export function ProgressForm({ progress, loading }) {
     return html`
         <article>
-            <header><strong>3. Progresso do Download do Modelo</strong></header>
+            <header><strong>Progresso do Download do Modelo</strong></header>
             ${!loading && progress.length === 0 && html`
                 <p>Nenhum download em andamento no momento.</p>
             `}

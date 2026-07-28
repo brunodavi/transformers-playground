@@ -6,7 +6,7 @@ const html = htm.bind(h);
 export function PipelineForm({ task, setTask, modelName, setModelName, loading, handleLoadPipeline }) {
     return html`
         <article>
-            <header><strong>1. Configurar e Carregar Pipeline</strong></header>
+            <header><strong>Configurar e Carregar Pipeline</strong></header>
             <form onSubmit=${handleLoadPipeline}>
                 <label>
                     Tarefa (Task):
