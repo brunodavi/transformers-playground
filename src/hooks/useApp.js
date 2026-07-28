@@ -13,6 +13,15 @@ export function useApp() {
 
     const { files, allDone, handleProgress, resetProgress } = useProgress();
 
+    const changeTask = (newTask) => {
+        setTask(newTask);
+        setStatus('');
+        setResult(null);
+        setPipelineInstance(null);
+        setLoading(false);
+        resetProgress();
+    };
+
     const handleLoadPipeline = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -56,7 +65,7 @@ export function useApp() {
 
     return {
         task,
-        setTask,
+        setTask: changeTask,
         modelName,
         setModelName,
         inputData,

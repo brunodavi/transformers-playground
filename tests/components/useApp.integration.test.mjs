@@ -91,6 +91,61 @@ test('useApp: pipeline loading failure should set error status', async () => {
     assert.ok(result.current.status.includes('Model not found'), 'Status deve conter mensagem de erro');
 });
 
+test('useApp: changing task after load failure clears error status', async () => {
+    const win = globalThis.window || globalThis;
+    win.pipeline = async () => {
+        throw new Error('Model not found');
+    };
+
+    const { result } = renderHook(() => useApp());
+
+    const loadEvent = { preventDefault: () => {} };
+    await act(async () => {
+        await result.current.handleLoadPipeline(loadEvent);
+    });
+
+    assert.ok(result.current.status.includes('Model not found'), 'Status deve conter erro');
+    assert.strictEqual(result.current.loading, false);
+
+    act(() => {
+        result.current.setTask('summarization');
+    });
+
+    assert.strictEqual(result.current.status, '');
+    assert.strictEqual(result.current.result, null);
+    assert.strictEqual(result.current.loading, false);
+    assert.deepStrictEqual(result.current.files, []);
+});
+
+test('useApp: changing task after successful load clears pipeline and status', async () => {
+    const mockPipelineObj = {
+        __call__: async (input) => ({ label: 'POSITIVE', score: 0.98 }),
+    };
+
+    const win = globalThis.window || globalThis;
+    win.pipeline = async () => mockPipelineObj;
+
+    const { result } = renderHook(() => useApp());
+
+    const loadEvent = { preventDefault: () => {} };
+    await act(async () => {
+        await result.current.handleLoadPipeline(loadEvent);
+    });
+
+    assert.ok(result.current.status.includes('sucesso'), 'Status deve indicar sucesso');
+    assert.ok(result.current.pipelineInstance !== null, 'Pipeline deve estar carregado');
+
+    act(() => {
+        result.current.setTask('translation');
+    });
+
+    assert.strictEqual(result.current.status, '');
+    assert.strictEqual(result.current.result, null);
+    assert.strictEqual(result.current.pipelineInstance, null);
+    assert.strictEqual(result.current.loading, false);
+    assert.deepStrictEqual(result.current.files, []);
+});
+
 test('useApp: pipeline inference failure should set error status', async () => {
     const mockPipelineObj = {
         __call__: async () => {
