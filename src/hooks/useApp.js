@@ -1,6 +1,6 @@
 import { useState } from 'https://esm.sh/preact/hooks';
 import { useProgress } from './useProgress.js';
-import { PipelineService } from '../services/pipelineService.js';
+import { createPipeline, runInference } from '../factories/createPipeline.js';
 
 export function useApp() {
     const [task, setTask] = useState('text-classification');
@@ -21,7 +21,7 @@ export function useApp() {
         resetProgress();
 
         try {
-            const pipe = await PipelineService.loadPipeline(task, modelName, handleProgress);
+            const pipe = await createPipeline(task, modelName, handleProgress);
             setPipelineInstance(pipe);
             setStatus(`Pipeline carregado com sucesso!`);
         } catch (err) {
@@ -43,11 +43,7 @@ export function useApp() {
         setLoading(true);
         setStatus('Executando inferência...');
         try {
-            const fn = typeof pipelineInstance === 'function' ? pipelineInstance : pipelineInstance.__call__ || pipelineInstance.call || pipelineInstance.run;
-            if (!fn) {
-                throw new Error('Tipo de pipeline não suportado: ' + typeof pipelineInstance);
-            }
-            const output = await fn(inputData);
+            const output = await runInference(pipelineInstance, inputData);
             setResult(output);
             setStatus('Inferência concluída com sucesso!');
         } catch (err) {
