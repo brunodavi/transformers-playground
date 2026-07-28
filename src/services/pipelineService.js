@@ -12,4 +12,15 @@ export class PipelineService {
 
         return await win.pipeline(task, modelName, options);
     }
+
+    static async checkModelExists(modelName) {
+        try {
+            const res = await fetch(`https://huggingface.co/api/models/${modelName}`, {
+                method: 'HEAD',
+            });
+            return res.ok;
+        } catch {
+            return null;
+        }
+    }
 }
