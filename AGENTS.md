@@ -126,6 +126,46 @@ O linkedom não implementa `value` no `<select>`. O setup adiciona um getter/set
 - **Configuração:** `package.json` define `"type": "module"`. `start-server.js` usa ESM (`import`).
 - **Commits:** Usar [Conventional Commits](https://www.conventionalcommits.org/) em inglês (ex: `feat:`, `fix:`, `test:`, `refactor:`, `chore:`).
 
+## Fluxo de Trabalho TDD (Red-Green-Refactor)
+
+Este projeto segue **estritamente TDD**. O fluxo é:
+
+### Hierarquia de Testes (Top-Down)
+1. **Integração mais alta primeiro** — `tests/components/app.test.js` (ou o teste de mais alto nível equivalente)
+2. Se o erro não for encontrado ou não reproduzir, **desce um nível** (ex: `tests/hooks/`, `tests/factories/`, `tests/components/`)
+3. Repete o ciclo TDD em cada nível até encontrar a camada específica onde o erro se manifesta
+4. Erros podem aparecer **somente em camadas específicas** (ex: só no componente, só no hook, só na factory)
+
+### Ciclo Red-Green-Refactor
+
+#### 🔴 RED
+- Escrevo o teste que reproduz o bug ou valida a nova funcionalidade
+- Rodo o teste e confirmo que **falha** com a mensagem de erro esperada
+- A mensagem de erro específica nos logs temporários do console ou no texto de erro dos testes é a âncora para o GREEN
+
+#### 🟢 GREEN
+- Faço o **mínimo necessário** para o teste passar
+- Uso a mensagem de erro específica dos logs/console como guia para a implementação
+- Assim que o erro específico desaparecer e o teste passar, **paro** (mesmo que o código não seja ideal)
+- **Commits:** `git add -A && git commit -m "test: add test for X"` no RED, `git add -A && git commit -m "feat: implement X"` no GREEN
+
+#### 🔵 REFACTOR (Opcional, com permissão)
+- Após o GREEN e o commit, **pergunto ao usuário** se deseja refatorar para simplificar algo que pode ser melhorado, por exemplo:
+  - Extrair lógica para funções menores
+  - Mover lógica para um hook existente ou novo
+  - Separar em componentes menores
+  - Renomear variáveis/funções para maior clareza
+  - Melhorar coesão ou reduzir acoplamento
+- Só refatoro **após confirmação explícita** do usuário
+- Após refatorar, rodo os testes novamente para garantir que continuam VERDE
+- **Commit do refactor:** `git add -A && git commit -m "refactor: simplify X by extracting Y"`
+
+### Regras Gerais
+- **Nunca** escrevo código de produção sem antes ter um teste vermelho.
+- **Nunca** refatoro sem ter os testes verdes primeiro.
+- **Nunca** refatoro sem perguntar ao usuário antes.
+- A hierarquia de testes pode exigir múltiplas passadas: se o bug está no hook, posso precisar de um teste de integração no app.test.js, depois descer para o hook.test.js.
+
 ## Documentação de Referência
 - O diretório `docs/transformers` contém documentação offline do Transformers.js para consulta quando necessário.
 - **Atenção:** Não commitar este diretório no git, pois contém documentação de terceiros com direitos autorais.
