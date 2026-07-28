@@ -5,27 +5,126 @@ Este é um playground de IA rodando diretamente no navegador, utilizando **Trans
 ## Arquitetura e Padrões
 - **Padrão de UI:** Preact com `htm` (para evitar etapas de build).
 - **Gerenciamento de Estado:** Hooks customizados (`src/hooks/`) encapsulando a lógica de negócio.
-- **Serviços:** Lógica isolada em `src/services/` para interagir com APIs externas (Transformers.js).
+- **Lógica de integração:** Isolada em `src/factories/` (createPipeline).
 - **Componentização:** UI dividida em componentes puros em `src/components/`.
 - **Constantes:** Dados fixos em `src/constants/` (ex: lista de tarefas do Transformers.js).
 - **Componentes Reutilizáveis:** `TaskSelect` aceita prop `allowCustom` para permitir valores personalizados fora da lista padrão.
 
 ## Estrutura de Pastas
 - `index.html`: Entrada principal.
+- `start-server.js`: Servidor HTTP estático (ESM, sem dependências).
 - `src/`: Código fonte.
   - `app.js`: Composição principal do App.
-  - `components/`: Componentes visuais (PipelineForm, InferenceForm, ProgressForm, TaskSelect).
+  - `components/`: Componentes visuais (PipelineForm, InferenceForm, ModelInput, ProgressForm, TaskSelect).
   - `hooks/`: Lógica de estado e efeitos (useApp, useProgress).
-  - `services/`: Lógica de integração com a IA (pipelineService).
-  - `constants/`: Dados estáticos (tasks).
-- `tests/`: Testes unitários (node --test).
+  - `factories/`: Lógica de integração com a IA (createPipeline.js).
+  - `constants/`: Dados estáticos (tasks.js).
+- `tests/`: Testes.
+  - `constants/`: Testes da TASKS.
+  - `factories/`: Testes do createPipeline (incluindo checkModelExists).
+  - `hooks/`: Testes de lógica pura (useProgress) e integração (useApp).
+  - `components/`: Testes de componentes com DOM simulado.
+  - `helpers/`: Loader ESM e setup de DOM para testes de componente.
+- `stryker.config.json`: Configuração do mutation testing.
 - `docs/transformers/`: Documentação offline do Transformers.js (não commitada).
 
+## Testes
+
+### Comandos
+
+| Comando | Descrição |
+|---|---|
+| `npm test` | Testes unitários (43 tests) |
+| `npm run test:coverage` | Testes unitários com cobertura (c8) |
+| `npm run test:components` | Testes de componente com DOM simulado (20 tests) |
+| `npm run test:mutation` | Mutation testing com Stryker |
+
+### Tipos de Teste
+
+**Unitários** (`tests/constants/`, `tests/factories/`, `tests/hooks/`):
+- Rodam com `node --test` puro, sem loader.
+- Testam lógica pura: `createPipeline`, `runInference`, `checkModelExists`, `useProgress`, `TASKS`, e integração do `useApp`.
+- Mocks manuais de `fetch`, `globalThis.pipeline`, etc.
+
+**Componentes** (`tests/components/`):
+- Rodam com `node --import` + loader ESM (`tests/helpers/`).
+- Usam `linkedom` para DOM headless e `@testing-library/preact` para queries e eventos.
+- Loader redireciona `https://esm.sh/` → pacotes locais (`preact`, `htm`, `@testing-library/preact`).
+- Testam: renderização, botões desabilitados/habilitados, submit de formulários, onChange de selects, progresso de download.
+
+**Integração** (`tests/components/useApp.integration.test.mjs`):
+- Testa o hook `useApp` com `renderHook` do `@testing-library/preact`.
+- Mock completo do pipeline: load, execução de inferência, tratamento de erros.
+
+### Mutation Testing
+
+Stryker modifica o código fonte (inverte operadores, remove condições, etc.) e verifica se os testes detectam a mutação. Mutantes sobreviventes indicam testes fracos.
+
+```bash
+npm run test:mutation
+```
+
+### Cobertura
+
+```bash
+npm run test:coverage
+```
+
+Gera relatório no terminal com `c8`. Alvos: 100% statements, 100% functions, 100% lines.
+
+## Armadilhas Conhecidas
+
+### `useState` + Funções no Preact/React
+
+O `useState` do Preact (e React) trata **qualquer valor function** passado ao setter como "functional updater" — ele chama a função com o estado anterior. Se você fizer:
+
+```js
+const [pipe, setPipe] = useState(null);
+setPipe(someAsyncFunction); // ❌ Preact chama someAsyncFunction(null)
+```
+
+`pipe` será o **retorno** de `someAsyncFunction`, não a função em si.
+
+**Solução em `useApp.js`:**
+```js
+setPipelineInstance(typeof pipe === 'function' ? { __call__: pipe } : pipe);
+```
+
+E em mocks de teste, usar objetos em vez de funções:
+```js
+win.pipeline = async () => ({
+    __call__: async (input) => ({ result: `processed: ${input}` }),
+});
+```
+
+O `runInference` já suporta objetos via `pipe.__call__ || pipe.call || pipe.run`.
+
+### Testes de Componente com ESM do esm.sh
+
+Os componentes importam de `https://esm.sh/`. Para testar em Node, um loader ESM redireciona esses imports para pacotes locais:
+
+- `tests/helpers/resolve-hook.mjs`: Mapeia URLs do esm.sh para pacotes npm.
+- `tests/helpers/register-loader.mjs`: Registra o loader via `register()` do `node:module`.
+- `tests/helpers/dom-setup.mjs`: Inicializa `linkedom`, `getComputedStyle`, `HTMLSelectElement.prototype.value`, e mock do `pipeline`.
+
+### `fireEvent.click` em formulários
+
+`fireEvent.click` em botões `type="submit"` **não** dispara o submit do form automaticamente no DOM simulado. Use `fireEvent.submit(formElement)` diretamente.
+
+### `getByRole` com linkedom
+
+`getByRole` depende de `getComputedStyle`, que não existe no linkedom. Adicione no setup: `globalThis.getComputedStyle = () => ({});`.
+
+### `HTMLSelectElement.value` no linkedom
+
+O linkedom não implementa `value` no `<select>`. O setup adiciona um getter/setter via `Object.defineProperty(HTMLSelectElement.prototype, 'value', ...)`.
+
 ## Padrões de Desenvolvimento
-- **Imports:** Utilizamos `esm.sh` para dependências externas no navegador e caminhos relativos para arquivos locais.
-- **Ambiente de Testes:** Rodado via `node --test`. Como o código fonte importa módulos de `https://`, os testes unitários devem focar em lógica pura ou usar mocks, evitando importar arquivos que contenham URLs `https://`.
-- **Configuração:** `package.json` define `"type": "module"`.
-- **Commits:** Usar [Conventional Commits](https://www.conventionalcommits.org/) em inglês (ex: `feat:`, `fix:`, `test:`, `refactor:`).
+- **Imports no navegador:** `https://esm.sh/` para dependências externas; caminhos relativos para arquivos locais.
+- **Testes unitários:** Não importam de `https://` (usam mocks). Focam em lógica pura.
+- **Testes de componente:** Importam de `https://` mas o loader redireciona para pacotes locais.
+- **Configuração:** `package.json` define `"type": "module"`. `start-server.js` usa ESM (`import`).
+- **Commits:** Usar [Conventional Commits](https://www.conventionalcommits.org/) em inglês (ex: `feat:`, `fix:`, `test:`, `refactor:`, `chore:`).
 
 ## Documentação de Referência
 - O diretório `docs/transformers` contém documentação offline do Transformers.js para consulta quando necessário.
