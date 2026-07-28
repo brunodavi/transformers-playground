@@ -12,7 +12,6 @@ function cleanupPipeline() {
     delete win.pipeline;
 }
 
-// Simula a lógica central do useApp.handleLoadPipeline
 async function simulateLoadPipeline(task, modelName) {
     if (!win.pipeline) {
         throw new Error('Pipeline do Transformers.js não encontrado no escopo global.');
@@ -24,7 +23,6 @@ async function simulateLoadPipeline(task, modelName) {
     return pipe;
 }
 
-// Simula a lógica central do useApp.handleRunInference
 async function simulateRunInference(pipe, input) {
     if (!pipe) {
         throw new Error('Por favor, carregue o pipeline primeiro.');
@@ -90,4 +88,84 @@ test('useApp logic: inference with object pipeline missing callable method', asy
         () => simulateRunInference(pipe, 'test'),
         /Tipo de pipeline não suportado/
     );
+});
+
+test('useApp logic: pipeline returning non-json result', async () => {
+    const mockFn = async (input) => input.toUpperCase();
+    setupPipeline(() => mockFn);
+
+    const pipe = await simulateLoadPipeline('text-classification', 'some-model');
+    const output = await simulateRunInference(pipe, 'hello');
+    assert.strictEqual(output, 'HELLO');
+
+    cleanupPipeline();
+});
+
+test('useApp logic: pipeline that throws during inference', async () => {
+    const mockFn = async () => { throw new Error('Model failed'); };
+    setupPipeline(() => mockFn);
+
+    const pipe = await simulateLoadPipeline('text-classification', 'some-model');
+    await assert.rejects(
+        () => simulateRunInference(pipe, 'test'),
+        /Model failed/
+    );
+
+    cleanupPipeline();
+});
+
+test('useApp logic: model name with special characters', async () => {
+    const mockFn = async (input) => ({ result: input });
+    const modelName = 'Xenova/bert-base-multilingual-uncased-sentiment';
+    setupPipeline((task, model) => {
+        assert.strictEqual(model, modelName);
+        return mockFn;
+    });
+
+    const pipe = await simulateLoadPipeline('sentiment-analysis', modelName);
+    const output = await simulateRunInference(pipe, 'olá mundo');
+    assert.deepStrictEqual(output, { result: 'olá mundo' });
+
+    cleanupPipeline();
+});
+
+test('useApp logic: object pipeline only has run method', async () => {
+    const mockObj = { run: async (input) => ({ result: `run: ${input}` }) };
+    setupPipeline(() => mockObj);
+
+    const pipe = await simulateLoadPipeline('text-classification', 'some-model');
+    const output = await simulateRunInference(pipe, 'fallback');
+    assert.deepStrictEqual(output, { result: 'run: fallback' });
+
+    cleanupPipeline();
+});
+
+test('useApp logic: object pipeline only has call method', async () => {
+    const mockObj = { call: async (input) => ({ result: `call: ${input}` }) };
+    setupPipeline(() => mockObj);
+
+    const pipe = await simulateLoadPipeline('text-classification', 'some-model');
+    const output = await simulateRunInference(pipe, 'via-call');
+    assert.deepStrictEqual(output, { result: 'call: via-call' });
+
+    cleanupPipeline();
+});
+
+test('useApp logic: load pipeline with progress callback', async () => {
+    let progressCalled = false;
+    const mockFn = async (input) => ({ result: input });
+    setupPipeline((task, model, options) => {
+        if (options && options.progress_callback) {
+            options.progress_callback({ file: 'model.bin', status: 'done' });
+            progressCalled = true;
+        }
+        return mockFn;
+    });
+
+    const options = { progress_callback: () => {} };
+    const pipe = await createPipeline('text-classification', 'some-model', options.progress_callback);
+    assert.strictEqual(typeof pipe, 'function');
+    assert.ok(progressCalled);
+
+    cleanupPipeline();
 });
