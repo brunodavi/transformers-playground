@@ -3,27 +3,30 @@ import htm from 'https://esm.sh/htm';
 
 const html = htm.bind(h);
 
-export function ProgressForm({ progress, loading }) {
+export function ProgressForm({ files, allDone, loading }) {
     return html`
         <article>
             <header><strong>Progresso do Download do Modelo</strong></header>
-            ${!loading && progress.length === 0 && html`
+            ${!loading && files.length === 0 && html`
                 <p>Nenhum download em andamento no momento.</p>
             `}
-            ${progress.length > 0 && html`
+            ${files.length > 0 && !allDone && html`
                 <div>
-                    ${progress.map((item, index) => html`
+                    ${files.map((item, index) => html`
                         <div key=${index} style="margin-bottom: 1rem;">
                             <small><strong>${item.file || item.name || 'Arquivo'}</strong> - ${item.status || 'Baixando'}</small>
                             ${item.total ? html`
                                 <progress value=${item.loaded} max=${item.total}></progress>
-                                <small>${Math.round((item.loaded / item.total) * 100)}% (${(item.loaded / 1024 / 1024).toFixed(2)} MB / ${(item.total / 1024 / 1024).toFixed(2)} MB)</small>
+                                <small>${item.percent}% (${item.loadedMB} MB / ${item.totalMB} MB)</small>
                             ` : html`
                                 <progress indeterminate></progress>
                             `}
                         </div>
                     `)}
                 </div>
+            `}
+            ${allDone && html`
+                <p>Download concluído!</p>
             `}
         </article>
     `;

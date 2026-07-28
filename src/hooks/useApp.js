@@ -11,7 +11,7 @@ export function useApp() {
     const [result, setResult] = useState(null);
     const [pipelineInstance, setPipelineInstance] = useState(null);
 
-    const { progress, handleProgress, resetProgress } = useProgress();
+    const { files, allDone, handleProgress, resetProgress } = useProgress();
 
     const handleLoadPipeline = async (e) => {
         e.preventDefault();
@@ -22,6 +22,8 @@ export function useApp() {
 
         try {
             const pipe = await PipelineService.loadPipeline(task, modelName, handleProgress);
+            console.log('[DIAG] pipe loaded, typeof:', typeof pipe);
+            console.log('[DIAG] pipe keys:', typeof pipe === 'function' ? '(function)' : Object.keys(pipe));
             setPipelineInstance(pipe);
             setStatus(`Pipeline carregado com sucesso!`);
         } catch (err) {
@@ -34,8 +36,18 @@ export function useApp() {
 
     const handleRunInference = async (e) => {
         e.preventDefault();
+        console.log('[DIAG] pipelineInstance:', pipelineInstance);
+        console.log('[DIAG] typeof pipelineInstance:', typeof pipelineInstance);
+
         if (!pipelineInstance) {
             setStatus('Por favor, carregue o pipeline primeiro.');
+            return;
+        }
+
+        if (typeof pipelineInstance !== 'function') {
+            const msg = 'Pipeline carregado não é uma função executável (tipo: ' + typeof pipelineInstance + ').';
+            console.error('[DIAG]', msg, pipelineInstance);
+            setStatus(`Erro na inferência: ${msg}`);
             return;
         }
 
@@ -64,7 +76,8 @@ export function useApp() {
         status,
         result,
         pipelineInstance,
-        progress,
+        files,
+        allDone,
         handleLoadPipeline,
         handleRunInference
     };

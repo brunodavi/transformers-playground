@@ -19,7 +19,8 @@ function App() {
         status,
         result,
         pipelineInstance,
-        progress,
+        files,
+        allDone,
         handleLoadPipeline,
         handleRunInference
     } = useApp();
@@ -35,8 +36,9 @@ function App() {
                 handleLoadPipeline=${handleLoadPipeline} 
             />
 
-            <${ProgressForm} 
-                progress=${progress} 
+            <${ProgressForm}
+                files=${files}
+                allDone=${allDone}
                 loading=${loading} 
             />
 
