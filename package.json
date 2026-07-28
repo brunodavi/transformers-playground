@@ -6,9 +6,19 @@
   "main": "start-server.js",
   "scripts": {
     "start": "node start-server.js",
-    "test": "node --test"
+    "test": "node --test 'tests/constants/**/*.test.js' 'tests/factories/**/*.test.js' 'tests/hooks/**/*.test.js'",
+    "test:coverage": "c8 node --test 'tests/constants/**/*.test.js' 'tests/factories/**/*.test.js' 'tests/hooks/**/*.test.js'",
+    "test:components": "node --import ./tests/helpers/register-loader.mjs --import ./tests/helpers/dom-setup.mjs --test tests/components/*.test.mjs"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@stryker-mutator/core": "^9.6.1",
+    "@testing-library/preact": "^3.2.4",
+    "c8": "^12.0.0",
+    "htm": "^3.1.1",
+    "linkedom": "^0.18.13",
+    "preact": "^10.29.7"
+  }
 }

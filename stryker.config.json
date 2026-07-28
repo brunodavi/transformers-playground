@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "command",
+  "commandRunner": {
+    "command": "node --test 'tests/constants/**/*.test.js' 'tests/factories/**/*.test.js' 'tests/hooks/**/*.test.js'"
+  },
+  "concurrency": 4,
+  "mutate": [
+    "src/factories/createPipeline.js",
+    "src/constants/tasks.js"
+  ],
+  "reporters": ["progress", "clear-text"],
+  "timeoutMS": 10000
+}
