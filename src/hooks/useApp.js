@@ -22,7 +22,7 @@ export function useApp() {
 
         try {
             const pipe = await createPipeline(task, modelName, handleProgress);
-            setPipelineInstance(pipe);
+            setPipelineInstance(typeof pipe === 'function' ? { __call__: pipe } : pipe);
             setStatus(`Pipeline carregado com sucesso!`);
         } catch (err) {
             console.error(err);
