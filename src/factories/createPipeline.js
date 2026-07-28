@@ -12,6 +12,17 @@ export async function createPipeline(task, modelName, progressCallback) {
     return await win.pipeline(task, modelName, options);
 }
 
+export async function checkModelExists(modelName) {
+    try {
+        const res = await fetch(`https://huggingface.co/api/models/${modelName}`, {
+            method: 'HEAD',
+        });
+        return res.ok;
+    } catch {
+        return null;
+    }
+}
+
 export async function runInference(pipe, input) {
     if (!pipe) {
         throw new Error('Pipeline não carregado.');

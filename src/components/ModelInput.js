@@ -1,7 +1,7 @@
 import { h } from 'https://esm.sh/preact';
 import { useState } from 'https://esm.sh/preact/hooks';
 import htm from 'https://esm.sh/htm';
-import { PipelineService } from '../services/pipelineService.js';
+import { checkModelExists } from '../factories/createPipeline.js';
 
 const html = htm.bind(h);
 
@@ -11,7 +11,7 @@ export function ModelInput({ value, onChange, label, placeholder, required }) {
     const handleBlur = async () => {
         if (!value.trim()) return;
         setStatus('checking');
-        const exists = await PipelineService.checkModelExists(value);
+        const exists = await checkModelExists(value);
         setStatus(exists === null ? 'error' : exists ? 'valid' : 'invalid');
     };
 
