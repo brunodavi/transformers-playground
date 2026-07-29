@@ -24,12 +24,24 @@ export default [
             },
         },
         rules: {
-            'max-len': ['warn', { code: 72, ignoreUrls: true, ignoreStrings: false, ignoreTemplateLiterals: false }],
+            'max-len': [
+		'warn',
+		{
+		  code: 72,
+		  ignoreUrls: true,
+		  ignoreStrings: false,
+		  ignoreTemplateLiterals: false
+		}
+	    ],
             'indent': ['warn', 4, { SwitchCase: 1 }],
             'semi': ['warn', 'always'],
-            'quotes': ['warn', 'single', { avoidEscape: true }],
+            'quotes': [
+		'warn', 'single', { avoidEscape: true }
+	    ],
             'comma-dangle': ['warn', 'always-multiline'],
-            'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+            'no-unused-vars': [
+		'warn', { argsIgnorePattern: '^_' }
+	    ],
             'no-console': 'off',
             'eol-last': ['warn', 'always'],
         },

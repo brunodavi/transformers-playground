@@ -8,7 +8,7 @@
     "start": "node start-server.js",
     "test": "node --test 'tests/constants/**/*.test.js' 'tests/factories/**/*.test.js' 'tests/hooks/**/*.test.js'",
     "test:coverage": "c8 node --test 'tests/constants/**/*.test.js' 'tests/factories/**/*.test.js' 'tests/hooks/**/*.test.js'",
-    "test:components": "node --import ./tests/helpers/register-loader.mjs --import ./tests/helpers/dom-setup.mjs --test tests/components/*.test.mjs",
+    "test:components": "node --import ./tests/helpers/register-loader.mjs --import ./tests/helpers/dom-setup.mjs --test 'tests/components/*.test.mjs' 'tests/hooks/*.test.mjs'",
     "test:mutation": "stryker run",
     "lint": "eslint src/ tests/",
     "lint:fix": "eslint src/ tests/ --fix"
