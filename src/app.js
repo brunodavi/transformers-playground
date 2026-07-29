@@ -34,6 +34,7 @@ function App() {
                 modelName=${modelName} 
                 setModelName=${setModelName} 
                 loading=${loading} 
+                pipelineInstance=${pipelineInstance}
                 handleLoadPipeline=${handleLoadPipeline} 
             />
 

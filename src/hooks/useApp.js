@@ -26,6 +26,18 @@ export function useApp() {
 
     const handleLoadPipeline = async (e) => {
         e.preventDefault();
+
+        if (pipelineInstance) {
+            setTask(task);
+            setStatus('');
+            setResult(null);
+            setInferenceTime(null);
+            setPipelineInstance(null);
+            setLoading(false);
+            resetProgress();
+            return;
+        }
+
         setLoading(true);
         setStatus(`Carregando pipeline "${task}" com o modelo "${modelName}"...`);
         setResult(null);

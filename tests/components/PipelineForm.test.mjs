@@ -21,6 +21,7 @@ test('PipelineForm renders task select and model input', () => {
             modelName="Xenova/test-model"
             setModelName=${setModelName}
             loading=${false}
+            pipelineInstance=${null}
             handleLoadPipeline=${handleLoadPipeline}
         />
     `);
@@ -42,11 +43,12 @@ test('PipelineForm disables button while loading', () => {
             modelName="Xenova/test-model"
             setModelName=${setModelName}
             loading=${true}
+            pipelineInstance=${null}
             handleLoadPipeline=${handleLoadPipeline}
         />
     `);
 
-    const button = screen.getByText('Carregar Modelo');
+    const button = screen.getByText('Carregando...');
     assert.ok(button.disabled, 'Botão deve estar desabilitado durante loading');
 });
 
@@ -64,6 +66,7 @@ test('PipelineForm submits form on button click', async () => {
             modelName="Xenova/test-model"
             setModelName=${() => {}}
             loading=${false}
+            pipelineInstance=${null}
             handleLoadPipeline=${handleLoadPipeline}
         />
     `);

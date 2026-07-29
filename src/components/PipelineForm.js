@@ -7,7 +7,7 @@ import { ModelInput } from './ModelInput.js';
 
 const html = htm.bind(h);
 
-export function PipelineForm({ task, setTask, modelName, setModelName, loading, handleLoadPipeline }) {
+export function PipelineForm({ task, setTask, modelName, setModelName, loading, pipelineInstance, handleLoadPipeline }) {
     const handleTaskChange = (newTask) => {
         setTask(newTask);
         const recommended = TASK_MODELS[newTask];
@@ -37,7 +37,7 @@ export function PipelineForm({ task, setTask, modelName, setModelName, loading, 
                 />
 
                 <button type="submit" aria-busy=${loading} disabled=${loading}>
-                    Carregar Modelo
+                    ${loading ? 'Carregando...' : pipelineInstance ? 'Descarregar' : 'Carregar Modelo'}
                 </button>
             </form>
         </article>
