@@ -173,3 +173,54 @@ test('useApp: pipeline inference failure should set error status', async () => {
     assert.strictEqual(result.current.loading, false);
     assert.ok(result.current.status.includes('Inference failed'), 'Status deve conter erro da inferência');
 });
+
+test('useApp: after pipeline load fails with progress done, changing task and loading another model works', async () => {
+    const win = globalThis.window || globalThis;
+    win.pipeline = async (task, model, options) => {
+        if (options?.progress_callback) {
+            options.progress_callback({ file: 'model.safetensors', status: 'progress', progress: 50 });
+            options.progress_callback({ file: 'model.safetensors', status: 'done', progress: 100 });
+        }
+        throw new Error('Failed to load model');
+    };
+
+    const { result } = renderHook(() => useApp());
+
+    const loadEvent = { preventDefault: () => {} };
+    await act(async () => {
+        await result.current.handleLoadPipeline(loadEvent);
+    });
+
+    assert.strictEqual(result.current.pipelineInstance, null);
+    assert.ok(result.current.status.includes('Failed to load model'), 'Status deve conter erro');
+    assert.strictEqual(result.current.loading, false);
+    assert.ok(result.current.files.length > 0, 'Progress files devem ter sido registrados');
+
+    act(() => {
+        result.current.setTask('summarization');
+    });
+
+    assert.strictEqual(result.current.status, '');
+    assert.strictEqual(result.current.pipelineInstance, null);
+    assert.strictEqual(result.current.loading, false);
+    assert.deepStrictEqual(result.current.files, []);
+
+    win.pipeline = async (task, model, options) => {
+        if (options?.progress_callback) {
+            options.progress_callback({ file: 'config.json', status: 'progress', progress: 30 });
+            options.progress_callback({ file: 'config.json', status: 'done', progress: 100 });
+        }
+        return {
+            __call__: async (input) => ({ result: `processed: ${input}` }),
+        };
+    };
+
+    await act(async () => {
+        await result.current.handleLoadPipeline(loadEvent);
+    });
+
+    assert.ok(result.current.pipelineInstance !== null, 'pipelineInstance deve ser carregado');
+    assert.ok(result.current.status.includes('sucesso'), 'Status deve indicar sucesso');
+    assert.strictEqual(result.current.loading, false);
+    assert.ok(result.current.files.length > 0, 'Progress files devem refletir novo download');
+});
