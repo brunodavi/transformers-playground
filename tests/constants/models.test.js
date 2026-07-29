@@ -10,8 +10,8 @@ test('TASK_MODELS should be an object', () => {
 test('TASK_MODELS should have an entry for every task in TASKS', () => {
     for (const task of TASKS) {
         assert.ok(
-            TASK_MODELS.hasOwnProperty(task.value),
-            `Faltando modelo recomendado para: ${task.value}`
+            Object.hasOwn(TASK_MODELS, task.value),
+            `Faltando modelo recomendado para: ${task.value}`,
         );
     }
 });

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert';
 import { h } from 'preact';
 import htm from 'htm';
-import { render, screen, fireEvent, cleanup } from '@testing-library/preact';
+import { render, screen, cleanup } from '@testing-library/preact';
 import { TaskSelect } from '../../src/components/TaskSelect.js';
 import { TASKS } from '../../src/constants/tasks.js';
 

@@ -32,7 +32,7 @@ export function useApp() {
         try {
             const pipe = await createPipeline(task, modelName, handleProgress);
             setPipelineInstance(typeof pipe === 'function' ? { __call__: pipe } : pipe);
-            setStatus(`Pipeline carregado com sucesso!`);
+            setStatus('Pipeline carregado com sucesso!');
         } catch (err) {
             console.error(err);
             setStatus(`Erro ao carregar pipeline: ${err.message}`);
@@ -77,6 +77,6 @@ export function useApp() {
         files,
         allDone,
         handleLoadPipeline,
-        handleRunInference
+        handleRunInference,
     };
 }

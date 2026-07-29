@@ -12,10 +12,10 @@ export function TaskSelect({ tasks, value, onChange, label, allowCustom }) {
             <select
                 value=${isCustom && allowCustom ? '' : value}
                 onChange=${(e) => {
-                    if (e.target.value) {
-                        onChange(e.target.value);
-                    }
-                }}
+        if (e.target.value) {
+            onChange(e.target.value);
+        }
+    }}
             >
                 ${allowCustom && html`<option value="">Personalizado...</option>`}
                 ${tasks.map(task => html`

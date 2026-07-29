@@ -16,7 +16,7 @@ test('createPipeline should throw if window.pipeline is missing', async () => {
     cleanupPipeline();
     await assert.rejects(() =>
         createPipeline('text-classification', 'dummy-model'),
-        /Pipeline do Transformers.js não encontrado/
+    /Pipeline do Transformers.js não encontrado/,
     );
 });
 

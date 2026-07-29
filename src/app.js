@@ -22,7 +22,7 @@ function App() {
         files,
         allDone,
         handleLoadPipeline,
-        handleRunInference
+        handleRunInference,
     } = useApp();
 
     return html`

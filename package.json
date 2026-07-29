@@ -9,15 +9,19 @@
     "test": "node --test 'tests/constants/**/*.test.js' 'tests/factories/**/*.test.js' 'tests/hooks/**/*.test.js'",
     "test:coverage": "c8 node --test 'tests/constants/**/*.test.js' 'tests/factories/**/*.test.js' 'tests/hooks/**/*.test.js'",
     "test:components": "node --import ./tests/helpers/register-loader.mjs --import ./tests/helpers/dom-setup.mjs --test tests/components/*.test.mjs",
-    "test:mutation": "stryker run"
+    "test:mutation": "stryker run",
+    "lint": "eslint src/ tests/",
+    "lint:fix": "eslint src/ tests/ --fix"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@stryker-mutator/core": "^9.6.1",
     "@testing-library/preact": "^3.2.4",
     "c8": "^12.0.0",
+    "eslint": "^10.8.0",
     "htm": "^3.1.1",
     "linkedom": "^0.18.13",
     "preact": "^10.29.7"

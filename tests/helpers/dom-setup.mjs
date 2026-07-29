@@ -37,6 +37,6 @@ if (globalThis.HTMLSelectElement && !('value' in HTMLSelectElement.prototype)) {
     });
 }
 
-globalThis.pipeline = async (task, model, options) => ({
+globalThis.pipeline = async (_task, _model, _options) => ({
     __call__: async (input) => ({ result: `processed: ${input}` }),
 });

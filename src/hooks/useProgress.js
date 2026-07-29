@@ -39,6 +39,6 @@ export function useProgress() {
         files,
         allDone,
         handleProgress,
-        resetProgress
+        resetProgress,
     };
 }

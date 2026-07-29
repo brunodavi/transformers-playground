@@ -119,7 +119,7 @@ test('useApp: changing task after load failure clears error status', async () =>
 
 test('useApp: changing task after successful load clears pipeline and status', async () => {
     const mockPipelineObj = {
-        __call__: async (input) => ({ label: 'POSITIVE', score: 0.98 }),
+        __call__: async (_input) => ({ label: 'POSITIVE', score: 0.98 }),
     };
 
     const win = globalThis.window || globalThis;
