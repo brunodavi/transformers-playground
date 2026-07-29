@@ -10,6 +10,7 @@ export function useApp() {
     const [status, setStatus] = useState('');
     const [result, setResult] = useState(null);
     const [pipelineInstance, setPipelineInstance] = useState(null);
+    const [inferenceTime, setInferenceTime] = useState(null);
 
     const { files, allDone, handleProgress, resetProgress } = useProgress();
 
@@ -17,6 +18,7 @@ export function useApp() {
         setTask(newTask);
         setStatus('');
         setResult(null);
+        setInferenceTime(null);
         setPipelineInstance(null);
         setLoading(false);
         resetProgress();
@@ -51,11 +53,15 @@ export function useApp() {
 
         setLoading(true);
         setStatus('Executando inferência...');
+        const start = performance.now();
         try {
             const output = await runInference(pipelineInstance, inputData);
+            const elapsed = ((performance.now() - start) / 1000).toFixed(2);
+            setInferenceTime(elapsed);
             setResult(output);
-            setStatus('Inferência concluída com sucesso!');
+            setStatus(`Inferência concluída em ${elapsed}s`);
         } catch (err) {
+            setInferenceTime(null);
             console.error(err);
             setStatus(`Erro na inferência: ${err.message}`);
         } finally {
@@ -73,6 +79,7 @@ export function useApp() {
         loading,
         status,
         result,
+        inferenceTime,
         pipelineInstance,
         files,
         allDone,

@@ -56,7 +56,9 @@ test('useApp: load pipeline and run inference with mocked pipeline', async () =>
         score: 0.98,
         input: 'I love this product!',
     });
-    assert.ok(result.current.status.includes('sucesso'), 'Status deve indicar inferência concluída');
+    assert.ok(result.current.status.includes('concluída'), 'Status deve indicar inferência concluída');
+    assert.ok(result.current.inferenceTime !== null, 'inferenceTime deve ser registrado');
+    assert.ok(typeof result.current.inferenceTime === 'string', 'inferenceTime deve ser string');
 });
 
 test('useApp: run inference without loading pipeline should show error', () => {

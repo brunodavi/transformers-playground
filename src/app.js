@@ -18,6 +18,7 @@ function App() {
         loading,
         status,
         result,
+        inferenceTime,
         pipelineInstance,
         files,
         allDone,
@@ -54,7 +55,10 @@ function App() {
 
             ${result !== null && html`
                 <article>
-                    <header><strong>Resultado:</strong></header>
+                    <header><strong>Resultado</strong></header>
+                    ${inferenceTime !== null && html`
+                        <small>Tempo: ${inferenceTime}s</small>
+                    `}
                     <pre><code>${JSON.stringify(result, null, 2)}</code></pre>
                 </article>
             `}
