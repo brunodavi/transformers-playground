@@ -14,7 +14,7 @@ test('InferenceForm renders textarea and execute button', () => {
         <${InferenceForm}
             inputData="test input"
             setInputData=${() => {}}
-            loading=${false}
+            inferenceLoading=${false}
             pipelineInstance=${{}}
             handleRunInference=${() => {}}
         />
@@ -30,7 +30,7 @@ test('InferenceForm disables button when no pipeline loaded', () => {
         <${InferenceForm}
             inputData="test input"
             setInputData=${() => {}}
-            loading=${false}
+            inferenceLoading=${false}
             pipelineInstance=${null}
             handleRunInference=${() => {}}
         />
@@ -40,19 +40,20 @@ test('InferenceForm disables button when no pipeline loaded', () => {
     assert.ok(button.disabled, 'Botão deve estar desabilitado sem pipeline carregado');
 });
 
-test('InferenceForm disables button while loading', () => {
+test('InferenceForm shows "Executando..." while loading', () => {
     render(html`
         <${InferenceForm}
             inputData="test input"
             setInputData=${() => {}}
-            loading=${true}
+            inferenceLoading=${true}
             pipelineInstance=${{}}
             handleRunInference=${() => {}}
         />
     `);
 
-    const button = screen.getByText('Executar Pipeline');
-    assert.ok(button.disabled, 'Botão deve estar desabilitado durante loading');
+    const button = screen.getByText('Executando...');
+    assert.ok(button, 'Botão deve mostrar "Executando..." durante inferência');
+    assert.ok(button.disabled, 'Botão deve estar desabilitado durante inferência');
 });
 
 test('InferenceForm calls handleRunInference on submit', () => {
@@ -66,7 +67,7 @@ test('InferenceForm calls handleRunInference on submit', () => {
         <${InferenceForm}
             inputData="test input"
             setInputData=${() => {}}
-            loading=${false}
+            inferenceLoading=${false}
             pipelineInstance=${{}}
             handleRunInference=${handleRunInference}
         />
@@ -82,7 +83,7 @@ test('InferenceForm updates textarea value when inputData changes', () => {
         <${InferenceForm}
             inputData="initial"
             setInputData=${() => {}}
-            loading=${false}
+            inferenceLoading=${false}
             pipelineInstance=${{}}
             handleRunInference=${() => {}}
         />
@@ -96,7 +97,7 @@ test('InferenceForm updates textarea value when inputData changes', () => {
         <${InferenceForm}
             inputData="updated"
             setInputData=${() => {}}
-            loading=${false}
+            inferenceLoading=${false}
             pipelineInstance=${{}}
             handleRunInference=${() => {}}
         />

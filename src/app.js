@@ -16,6 +16,7 @@ function App() {
         inputData,
         setInputData,
         loading,
+        inferenceLoading,
         status,
         result,
         inferenceTime,
@@ -47,7 +48,7 @@ function App() {
             <${InferenceForm} 
                 inputData=${inputData} 
                 setInputData=${setInputData} 
-                loading=${loading} 
+                inferenceLoading=${inferenceLoading} 
                 pipelineInstance=${pipelineInstance} 
                 handleRunInference=${handleRunInference} 
             />

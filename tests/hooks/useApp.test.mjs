@@ -29,6 +29,7 @@ test('useApp: load pipeline and run inference with mocked pipeline', async () =>
 
     assert.strictEqual(result.current.task, 'text-classification');
     assert.strictEqual(result.current.loading, false);
+    assert.strictEqual(result.current.inferenceLoading, false);
     assert.strictEqual(result.current.result, null);
     assert.strictEqual(result.current.pipelineInstance, null);
 
@@ -39,6 +40,7 @@ test('useApp: load pipeline and run inference with mocked pipeline', async () =>
 
     assert.ok(result.current.pipelineInstance !== null, 'pipelineInstance deve ser carregado');
     assert.strictEqual(result.current.loading, false);
+    assert.strictEqual(result.current.inferenceLoading, false);
     assert.ok(result.current.status.includes('sucesso'), 'Status deve indicar sucesso');
 
     act(() => {
@@ -51,6 +53,7 @@ test('useApp: load pipeline and run inference with mocked pipeline', async () =>
     });
 
     assert.strictEqual(result.current.loading, false);
+    assert.strictEqual(result.current.inferenceLoading, false);
     assert.deepStrictEqual(result.current.result, {
         label: 'POSITIVE',
         score: 0.98,
@@ -72,6 +75,7 @@ test('useApp: run inference without loading pipeline should show error', () => {
     });
 
     assert.strictEqual(result.current.loading, false);
+    assert.strictEqual(result.current.inferenceLoading, false);
     assert.ok(result.current.status.includes('carregue o pipeline'), 'Status deve pedir para carregar pipeline');
 });
 
@@ -90,6 +94,7 @@ test('useApp: pipeline loading failure should set error status', async () => {
 
     assert.strictEqual(result.current.pipelineInstance, null);
     assert.strictEqual(result.current.loading, false);
+    assert.strictEqual(result.current.inferenceLoading, false);
     assert.ok(result.current.status.includes('Model not found'), 'Status deve conter mensagem de erro');
 });
 
@@ -116,6 +121,7 @@ test('useApp: changing task after load failure clears error status', async () =>
     assert.strictEqual(result.current.status, '');
     assert.strictEqual(result.current.result, null);
     assert.strictEqual(result.current.loading, false);
+    assert.strictEqual(result.current.inferenceLoading, false);
     assert.deepStrictEqual(result.current.files, []);
 });
 
@@ -145,6 +151,7 @@ test('useApp: changing task after successful load clears pipeline and status', a
     assert.strictEqual(result.current.result, null);
     assert.strictEqual(result.current.pipelineInstance, null);
     assert.strictEqual(result.current.loading, false);
+    assert.strictEqual(result.current.inferenceLoading, false);
     assert.deepStrictEqual(result.current.files, []);
 });
 
@@ -173,6 +180,7 @@ test('useApp: pipeline inference failure should set error status', async () => {
     });
 
     assert.strictEqual(result.current.loading, false);
+    assert.strictEqual(result.current.inferenceLoading, false);
     assert.ok(result.current.status.includes('Inference failed'), 'Status deve conter erro da inferência');
 });
 
@@ -196,6 +204,7 @@ test('useApp: after pipeline load fails with progress done, changing task and lo
     assert.strictEqual(result.current.pipelineInstance, null);
     assert.ok(result.current.status.includes('Failed to load model'), 'Status deve conter erro');
     assert.strictEqual(result.current.loading, false);
+    assert.strictEqual(result.current.inferenceLoading, false);
     assert.ok(result.current.files.length > 0, 'Progress files devem ter sido registrados');
 
     act(() => {
@@ -205,6 +214,7 @@ test('useApp: after pipeline load fails with progress done, changing task and lo
     assert.strictEqual(result.current.status, '');
     assert.strictEqual(result.current.pipelineInstance, null);
     assert.strictEqual(result.current.loading, false);
+    assert.strictEqual(result.current.inferenceLoading, false);
     assert.deepStrictEqual(result.current.files, []);
 
     win.pipeline = async (task, model, options) => {
@@ -224,5 +234,6 @@ test('useApp: after pipeline load fails with progress done, changing task and lo
     assert.ok(result.current.pipelineInstance !== null, 'pipelineInstance deve ser carregado');
     assert.ok(result.current.status.includes('sucesso'), 'Status deve indicar sucesso');
     assert.strictEqual(result.current.loading, false);
+    assert.strictEqual(result.current.inferenceLoading, false);
     assert.ok(result.current.files.length > 0, 'Progress files devem refletir novo download');
 });

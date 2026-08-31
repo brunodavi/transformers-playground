@@ -7,6 +7,7 @@ export function useApp() {
     const [modelName, setModelName] = useState('Xenova/distilbert-base-uncased-finetuned-sst-2-english');
     const [inputData, setInputData] = useState('I love using transformers.js!');
     const [loading, setLoading] = useState(false);
+    const [inferenceLoading, setInferenceLoading] = useState(false);
     const [status, setStatus] = useState('');
     const [result, setResult] = useState(null);
     const [pipelineInstance, setPipelineInstance] = useState(null);
@@ -21,6 +22,7 @@ export function useApp() {
         setInferenceTime(null);
         setPipelineInstance(null);
         setLoading(false);
+        setInferenceLoading(false);
         resetProgress();
     };
 
@@ -63,7 +65,7 @@ export function useApp() {
             return;
         }
 
-        setLoading(true);
+        setInferenceLoading(true);
         setStatus('Executando inferência...');
         const start = performance.now();
         try {
@@ -77,7 +79,7 @@ export function useApp() {
             console.error(err);
             setStatus(`Erro na inferência: ${err.message}`);
         } finally {
-            setLoading(false);
+            setInferenceLoading(false);
         }
     };
 
@@ -89,6 +91,7 @@ export function useApp() {
         inputData,
         setInputData,
         loading,
+        inferenceLoading,
         status,
         result,
         inferenceTime,

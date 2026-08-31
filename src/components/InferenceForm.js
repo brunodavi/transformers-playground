@@ -3,7 +3,7 @@ import htm from 'https://esm.sh/htm';
 
 const html = htm.bind(h);
 
-export function InferenceForm({ inputData, setInputData, loading, pipelineInstance, handleRunInference }) {
+export function InferenceForm({ inputData, setInputData, inferenceLoading, pipelineInstance, handleRunInference }) {
     return html`
         <article>
             <header><strong>Executar Inferência</strong></header>
@@ -19,8 +19,8 @@ export function InferenceForm({ inputData, setInputData, loading, pipelineInstan
                     ></textarea>
                 </label>
 
-                <button type="submit" aria-busy=${loading} disabled=${!pipelineInstance || loading}>
-                    Executar Pipeline
+                <button type="submit" aria-busy=${inferenceLoading} disabled=${!pipelineInstance || inferenceLoading}>
+                    ${inferenceLoading ? 'Executando...' : 'Executar Pipeline'}
                 </button>
             </form>
         </article>
